@@ -18,9 +18,11 @@ import org.opencv.imgproc.Imgproc;
 public class ProcessActivity extends AppCompatActivity {
 
 
-    ImageView mImageView ,mImageViewGray;
+    ImageView mImageView ,mImageViewGray ,mImageViewCanny;
 
     private static final String TAG = "ProcessActivity";
+
+
 
 
     static {
@@ -31,6 +33,10 @@ public class ProcessActivity extends AppCompatActivity {
         }
     }
 
+    Mat tmp ;
+    Mat gtmp ;
+    Mat ctmp ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +44,7 @@ public class ProcessActivity extends AppCompatActivity {
 
         mImageView = (ImageView) findViewById(R.id.imageView);
         mImageViewGray = (ImageView) findViewById(R.id.imageViewGray);
-
+        mImageViewCanny = (ImageView) findViewById(R.id.imageViewCanny);
 
         Intent intent= getIntent();
         Bundle b = intent.getExtras();
@@ -57,7 +63,11 @@ public class ProcessActivity extends AppCompatActivity {
 
             final Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath());
 
+            tmp = new Mat();
+            gtmp = new Mat();
+
             convertTogray(bitmap);
+            convertTocanny(gtmp);
         }
 
 
@@ -67,8 +77,7 @@ public class ProcessActivity extends AppCompatActivity {
 
     private void convertTogray(Bitmap bmp) {
 
-        Mat tmp = new Mat();
-        Mat gtmp = new Mat();
+
         Utils.bitmapToMat(bmp,tmp);
         Imgproc.cvtColor(tmp, gtmp, Imgproc.COLOR_BGR2GRAY);
 
@@ -76,6 +85,17 @@ public class ProcessActivity extends AppCompatActivity {
 
         Utils.matToBitmap(gtmp, img);
         mImageViewGray.setImageBitmap(img);
+
+    }
+
+    private void convertTocanny(Mat m){
+        Imgproc.Canny(m ,gtmp ,100,200);
+
+        Bitmap imgCanny = Bitmap.createBitmap(gtmp.cols(), gtmp.rows(),Bitmap.Config.ARGB_8888);
+
+        Utils.matToBitmap(gtmp, imgCanny);
+        mImageViewGray.setImageBitmap(imgCanny);
+
 
     }
 }
