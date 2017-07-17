@@ -13,12 +13,17 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProcessActivity extends AppCompatActivity {
 
 
-    ImageView mImageView ,mImageViewGray ,mImageViewCanny;
+    ImageView mImageView ,mImageViewGray ,mImageViewCanny ,mImageViewContours;
 
     private static final String TAG = "ProcessActivity";
 
@@ -45,6 +50,7 @@ public class ProcessActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.imageView);
         mImageViewGray = (ImageView) findViewById(R.id.imageViewGray);
         mImageViewCanny = (ImageView) findViewById(R.id.imageViewCanny);
+        mImageViewContours = (ImageView) findViewById(R.id.imageViewContours);
 
         Intent intent= getIntent();
         Bundle b = intent.getExtras();
@@ -68,6 +74,7 @@ public class ProcessActivity extends AppCompatActivity {
 
             convertTogray(bitmap);
             convertTocanny(gtmp);
+            drawContours(gtmp);
         }
 
 
@@ -75,10 +82,30 @@ public class ProcessActivity extends AppCompatActivity {
 
     }
 
+    private void drawContours(Mat m) {
+
+
+        //downsampling
+        //Imgproc.pyrDown(m ,m);
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Mat hierarchy = new Mat();
+        Mat src = m;
+// find contours:
+        Imgproc.findContours(m, contours, hierarchy, Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+            Imgproc.drawContours(tmp, contours, contourIdx, new Scalar(0, 0, 255), -1);
+        }
+
+        Bitmap imgContours = Bitmap.createBitmap(m.cols(), m.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp, imgContours);
+        mImageViewContours.setImageBitmap(imgContours);
+    }
+
     private void convertTogray(Bitmap bmp) {
 
 
         Utils.bitmapToMat(bmp,tmp);
+        Imgproc.pyrDown(tmp ,tmp);
         Imgproc.cvtColor(tmp, gtmp, Imgproc.COLOR_BGR2GRAY);
 
         Bitmap img = Bitmap.createBitmap(gtmp.cols(), gtmp.rows(),Bitmap.Config.ARGB_8888);
@@ -89,12 +116,14 @@ public class ProcessActivity extends AppCompatActivity {
     }
 
     private void convertTocanny(Mat m){
+
+
         Imgproc.Canny(m ,gtmp ,100,200);
 
         Bitmap imgCanny = Bitmap.createBitmap(gtmp.cols(), gtmp.rows(),Bitmap.Config.ARGB_8888);
 
         Utils.matToBitmap(gtmp, imgCanny);
-        mImageViewGray.setImageBitmap(imgCanny);
+        mImageViewCanny.setImageBitmap(imgCanny);
 
 
     }
