@@ -15,6 +15,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -117,8 +118,11 @@ public class ProcessActivity extends AppCompatActivity {
 
     private void convertTocanny(Mat m){
 
+        //blur image
+        Imgproc.blur(m,m,new Size(3,3));
 
-        Imgproc.Canny(m ,gtmp ,100,200);
+        //canny algorithm
+        Imgproc.Canny(m ,gtmp ,80,150);
 
         Bitmap imgCanny = Bitmap.createBitmap(gtmp.cols(), gtmp.rows(),Bitmap.Config.ARGB_8888);
 
