@@ -19,6 +19,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -175,16 +176,25 @@ public class ProcessActivity extends AppCompatActivity {
 
             //Convert back to MatOfPoint
             MatOfPoint points = new MatOfPoint( approxCurve.toArray() );
-
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
             Log.d(TAG,"x"+Integer.toString(rect.x));
             Log.d(TAG,"y"+Integer.toString(rect.y));
 
 
+
+           // Rotated rect
+            RotatedRect  minRect = Imgproc.minAreaRect(contour2f);
+
+            Point p = minRect.center;
+
+            //Imgproc.circle(tmp,new Point(p.x,p.y),100,new Scalar(200,200,200),4);
+
             // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
 
             Imgproc.rectangle(tmp,new Point(rect.x,rect.y),new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(255,0,255), 3);
+
+
 
         }
 
