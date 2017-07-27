@@ -83,7 +83,11 @@ public class PhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                startProcessing();
+             if(!(fileUri ==null)) {
+                 startProcessing();
+             }else {
+                 Toast.makeText(PhotoActivity.this,"take a photo first",Toast.LENGTH_LONG).show();
+             }
             }
         });
 
