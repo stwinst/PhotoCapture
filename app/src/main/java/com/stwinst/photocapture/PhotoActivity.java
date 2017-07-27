@@ -55,6 +55,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ///////fghfghfhfhfh/////
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
